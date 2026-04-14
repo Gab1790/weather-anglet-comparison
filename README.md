@@ -6,7 +6,7 @@ Site web qui compare les prévisions météorologiques pour **Anglet (France)** 
 
 ## 🚀 Démo rapide
 
-Ouvrez simplement `index.html` dans votre navigateur — **deux sources fonctionnent sans clé API** (Open-Meteo et Météo Concept avec clé gratuite), les autres s'activent en ajoutant vos clés.
+Téléchargez **tout le dossier du projet** (pas uniquement `index.html`), puis ouvrez `index.html` dans votre navigateur — **deux sources fonctionnent sans clé API** (Open-Meteo et Météo Concept avec clé gratuite), les autres s'activent en ajoutant vos clés.
 
 ---
 

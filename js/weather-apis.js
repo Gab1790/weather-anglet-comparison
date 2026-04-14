@@ -166,13 +166,13 @@ async function fetchMeteoConcept(apiKey) {
   return {
     temp: d.tmax != null ? Math.round((d.tmax + d.tmin) / 2 * 10) / 10 : null,
     feelsLike: null,
-    humidity: d.rh2m ?? null,
+    humidity: d.rh2m != null ? d.rh2m : null,
     windSpeed: d.wind10m != null ? Math.round(d.wind10m * 3.6) : null,
     windDir: d.dirwind10m != null ? degToCardinal(d.dirwind10m) : null,
     pressure: null,
     uvIndex: null,
-    description: descMap[d.weather] ?? 'Inconnu',
-    weatherIcon: weatherIconMap[d.weather] ?? '🌡️',
+    description: descMap[d.weather] != null ? descMap[d.weather] : 'Inconnu',
+    weatherIcon: weatherIconMap[d.weather] != null ? weatherIconMap[d.weather] : '🌡️',
     visibility: null,
     cloudCover: null,
     dewPoint: null,
@@ -205,9 +205,9 @@ async function fetchOpenWeatherMap(apiKey) {
     pressure: d.main.pressure,
     uvIndex: null,
     description: d.weather[0].description.charAt(0).toUpperCase() + d.weather[0].description.slice(1),
-    weatherIcon: iconMap[prefix] ?? '🌡️',
+    weatherIcon: iconMap[prefix] != null ? iconMap[prefix] : '🌡️',
     visibility: d.visibility != null ? Math.round(d.visibility / 1000) : null,
-    cloudCover: d.clouds?.all ?? null,
+    cloudCover: d.clouds && d.clouds.all != null ? d.clouds.all : null,
     dewPoint: null,
   };
 }
@@ -242,13 +242,13 @@ async function fetchWeatherAPI(apiKey) {
     feelsLike: Math.round(c.feelslike_c * 10) / 10,
     humidity: c.humidity,
     windSpeed: Math.round(c.wind_kph),
-    windDir: c.wind_dir ?? null,
+    windDir: c.wind_dir != null ? c.wind_dir : null,
     pressure: Math.round(c.pressure_mb),
-    uvIndex: c.uv ?? null,
+    uvIndex: c.uv != null ? c.uv : null,
     description: c.condition.text,
     weatherIcon: wapiIcon(condCode, isDay),
     visibility: c.vis_km != null ? Math.round(c.vis_km) : null,
-    cloudCover: c.cloud ?? null,
+    cloudCover: c.cloud != null ? c.cloud : null,
     dewPoint: c.dewpoint_c != null ? Math.round(c.dewpoint_c * 10) / 10 : null,
   };
 }
@@ -284,7 +284,7 @@ async function fetchVisualCrossing(apiKey) {
     windSpeed: Math.round(c.windspeed),
     windDir: c.winddir != null ? degToCardinal(c.winddir) : null,
     pressure: Math.round(c.pressure),
-    uvIndex: c.uvindex ?? null,
+    uvIndex: c.uvindex != null ? c.uvindex : null,
     description: c.conditions,
     weatherIcon: vcIcon(c.icon),
     visibility: c.visibility != null ? Math.round(c.visibility) : null,
@@ -334,7 +334,7 @@ async function fetchTomorrowIo(apiKey) {
     windSpeed: Math.round(v.windSpeed * 3.6),
     windDir: v.windDirection != null ? degToCardinal(v.windDirection) : null,
     pressure: Math.round(v.pressureSurfaceLevel),
-    uvIndex: v.uvIndex ?? null,
+    uvIndex: v.uvIndex != null ? v.uvIndex : null,
     description: descMap[v.weatherCode] || 'Inconnu',
     weatherIcon: tiIcon(v.weatherCode),
     visibility: v.visibility != null ? Math.round(v.visibility) : null,
@@ -388,13 +388,13 @@ async function fetchWeatherstack(apiKey) {
     feelsLike: Math.round(c.feelslike * 10) / 10,
     humidity: c.humidity,
     windSpeed: c.wind_speed,
-    windDir: c.wind_dir ?? null,
+    windDir: c.wind_dir != null ? c.wind_dir : null,
     pressure: c.pressure,
-    uvIndex: c.uv_index ?? null,
-    description: c.weather_descriptions?.[0] ?? 'Inconnu',
+    uvIndex: c.uv_index != null ? c.uv_index : null,
+    description: c.weather_descriptions && c.weather_descriptions[0] != null ? c.weather_descriptions[0] : 'Inconnu',
     weatherIcon: wsIcon(c.weather_code),
     visibility: c.visibility != null ? c.visibility : null,
-    cloudCover: c.cloudcover ?? null,
+    cloudCover: c.cloudcover != null ? c.cloudcover : null,
     dewPoint: null,
   };
 }
@@ -434,23 +434,23 @@ async function fetchAccuWeather(apiKey) {
     return '🌡️';
   }
 
-  const tempC = c.Temperature?.Metric?.Value ?? null;
-  const feelsC = c.RealFeelTemperature?.Metric?.Value ?? null;
-  const windMs = c.Wind?.Speed?.Metric?.Value ?? null;
+  const tempC = c.Temperature && c.Temperature.Metric && c.Temperature.Metric.Value != null ? c.Temperature.Metric.Value : null;
+  const feelsC = c.RealFeelTemperature && c.RealFeelTemperature.Metric && c.RealFeelTemperature.Metric.Value != null ? c.RealFeelTemperature.Metric.Value : null;
+  const windMs = c.Wind && c.Wind.Speed && c.Wind.Speed.Metric && c.Wind.Speed.Metric.Value != null ? c.Wind.Speed.Metric.Value : null;
 
   return {
     temp: tempC != null ? Math.round(tempC * 10) / 10 : null,
     feelsLike: feelsC != null ? Math.round(feelsC * 10) / 10 : null,
-    humidity: c.RelativeHumidity ?? null,
+    humidity: c.RelativeHumidity != null ? c.RelativeHumidity : null,
     windSpeed: windMs != null ? Math.round(windMs) : null,
-    windDir: c.Wind?.Direction?.Localized ?? null,
-    pressure: c.Pressure?.Metric?.Value != null ? Math.round(c.Pressure.Metric.Value) : null,
-    uvIndex: c.UVIndex ?? null,
-    description: c.WeatherText ?? 'Inconnu',
+    windDir: c.Wind && c.Wind.Direction && c.Wind.Direction.Localized != null ? c.Wind.Direction.Localized : null,
+    pressure: c.Pressure && c.Pressure.Metric && c.Pressure.Metric.Value != null ? Math.round(c.Pressure.Metric.Value) : null,
+    uvIndex: c.UVIndex != null ? c.UVIndex : null,
+    description: c.WeatherText != null ? c.WeatherText : 'Inconnu',
     weatherIcon: awIcon(iconNum),
-    visibility: c.Visibility?.Metric?.Value != null ? Math.round(c.Visibility.Metric.Value) : null,
-    cloudCover: c.CloudCover ?? null,
-    dewPoint: c.DewPoint?.Metric?.Value != null ? Math.round(c.DewPoint.Metric.Value * 10) / 10 : null,
+    visibility: c.Visibility && c.Visibility.Metric && c.Visibility.Metric.Value != null ? Math.round(c.Visibility.Metric.Value) : null,
+    cloudCover: c.CloudCover != null ? c.CloudCover : null,
+    dewPoint: c.DewPoint && c.DewPoint.Metric && c.DewPoint.Metric.Value != null ? Math.round(c.DewPoint.Metric.Value * 10) / 10 : null,
   };
 }
 
@@ -491,8 +491,8 @@ async function fetchPirateWeather(apiKey) {
     windSpeed: Math.round(c.windSpeed),
     windDir: c.windBearing != null ? degToCardinal(c.windBearing) : null,
     pressure: Math.round(c.pressure),
-    uvIndex: c.uvIndex ?? null,
-    description: c.summary ?? descMap[c.icon] ?? 'Inconnu',
+    uvIndex: c.uvIndex != null ? c.uvIndex : null,
+    description: c.summary != null ? c.summary : (descMap[c.icon] != null ? descMap[c.icon] : 'Inconnu'),
     weatherIcon: pwIcon(c.icon),
     visibility: c.visibility != null ? Math.round(c.visibility) : null,
     cloudCover: c.cloudCover != null ? Math.round(c.cloudCover * 100) : null,
@@ -528,15 +528,15 @@ async function fetchMeteosource(apiKey) {
   return {
     temp: c.temperature != null ? Math.round(c.temperature * 10) / 10 : null,
     feelsLike: c.feels_like != null ? Math.round(c.feels_like * 10) / 10 : null,
-    humidity: c.relative_humidity ?? null,
-    windSpeed: c.wind?.speed != null ? Math.round(c.wind.speed) : null,
-    windDir: c.wind?.angle != null ? degToCardinal(c.wind.angle) : null,
+    humidity: c.relative_humidity != null ? c.relative_humidity : null,
+    windSpeed: c.wind && c.wind.speed != null ? Math.round(c.wind.speed) : null,
+    windDir: c.wind && c.wind.angle != null ? degToCardinal(c.wind.angle) : null,
     pressure: c.pressure != null ? Math.round(c.pressure) : null,
-    uvIndex: c.uv_index ?? null,
-    description: c.summary ?? 'Inconnu',
+    uvIndex: c.uv_index != null ? c.uv_index : null,
+    description: c.summary != null ? c.summary : 'Inconnu',
     weatherIcon: msIcon(c.icon),
     visibility: null,
-    cloudCover: c.cloud_cover?.total ?? null,
+    cloudCover: c.cloud_cover && c.cloud_cover.total != null ? c.cloud_cover.total : null,
     dewPoint: null,
   };
 }

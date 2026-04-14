@@ -329,7 +329,7 @@ function updateSummary() {
     .filter(st => st && st.status === 'success' && st.data && st.data.temp != null)
     .map(st => st.data.temp);
 
-  const successCount = WEATHER_SOURCES.filter(s => sourceStates[s.id]?.status === 'success').length;
+  const successCount = WEATHER_SOURCES.filter(s => sourceStates[s.id] && sourceStates[s.id].status === 'success').length;
   const totalLoaded = WEATHER_SOURCES.filter(s => sourceStates[s.id] && sourceStates[s.id].status !== 'loading').length;
 
   document.getElementById('active-sources').textContent = `${successCount} / ${WEATHER_SOURCES.length}`;
@@ -375,7 +375,7 @@ async function renderForecast() {
           <span class="temp-max">${displayTemp(Math.round(daily.temperature_2m_max[i]))}</span>
           <span class="temp-min">${displayTemp(Math.round(daily.temperature_2m_min[i]))}</span>
         </div>
-        <div class="forecast-rain">🌧️ ${daily.precipitation_probability_max[i] ?? 0}%</div>
+        <div class="forecast-rain">🌧️ ${daily.precipitation_probability_max[i] != null ? daily.precipitation_probability_max[i] : 0}%</div>
         <div class="forecast-wind">💨 ${Math.round(daily.wind_speed_10m_max[i])} km/h</div>
       `;
       grid.appendChild(div);
