@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Météo Anglet – Comparaison des sources</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ============================
+       HEADER
+  ============================= -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-title">
+        <span class="header-icon">🌤️</span>
+        <div>
+          <h1>Météo Anglet</h1>
+          <p class="header-subtitle">Comparaison de plusieurs sources météo</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="location-badge">
+          <span class="location-icon">📍</span>
+          <span>Anglet, France<br/><small>43.4863° N, 1.5402° W (−1.5402)</small></span>
+        </div>
+        <div id="last-update" class="update-time">Chargement…</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================
+       API KEY CONFIGURATION PANEL
+  ============================= -->
+  <div class="config-banner" id="config-banner">
+    <div class="config-banner-inner">
+      <span class="config-icon">🔑</span>
+      <span>Certaines sources nécessitent une clé API. Configurez-les ci-dessous pour activer toutes les sources.</span>
+      <button class="btn-config" onclick="toggleConfigPanel()">Configurer les clés API</button>
+      <button class="btn-close-banner" onclick="dismissBanner()" title="Fermer">✕</button>
+    </div>
+  </div>
+
+  <div class="config-panel" id="config-panel" hidden>
+    <div class="config-panel-inner">
+      <h2>🔑 Configuration des clés API</h2>
+      <p class="config-description">
+        Renseignez vos clés API pour activer les sources supplémentaires. Les sources sans clé (Open-Meteo, Météo Concept) fonctionnent sans configuration.
+        Les clés sont stockées uniquement dans votre navigateur (localStorage).
+      </p>
+      <div class="config-grid" id="config-grid">
+        <!-- Filled by JS -->
+      </div>
+      <div class="config-actions">
+        <button class="btn-primary" onclick="saveApiKeys()">💾 Sauvegarder</button>
+        <button class="btn-secondary" onclick="toggleConfigPanel()">Annuler</button>
+        <button class="btn-danger" onclick="clearApiKeys()">🗑️ Effacer toutes les clés</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       MAIN CONTENT
+  ============================= -->
+  <main class="main-content">
+
+    <!-- Summary / Current conditions row -->
+    <section class="summary-section">
+      <div class="summary-card" id="summary-avg">
+        <div class="summary-label">Température moyenne</div>
+        <div class="summary-value" id="avg-temp">–</div>
+        <div class="summary-sub">Toutes sources confondues</div>
+      </div>
+      <div class="summary-card" id="summary-min">
+        <div class="summary-label">Min sources</div>
+        <div class="summary-value" id="min-temp">–</div>
+        <div class="summary-sub">Température la plus basse</div>
+      </div>
+      <div class="summary-card" id="summary-max">
+        <div class="summary-label">Max sources</div>
+        <div class="summary-value" id="max-temp">–</div>
+        <div class="summary-sub">Température la plus haute</div>
+      </div>
+      <div class="summary-card" id="summary-loaded">
+        <div class="summary-label">Sources actives</div>
+        <div class="summary-value" id="active-sources">0 / 0</div>
+        <div class="summary-sub">Sources chargées avec succès</div>
+      </div>
+    </section>
+
+    <!-- Refresh button -->
+    <div class="refresh-bar">
+      <button class="btn-refresh" id="btn-refresh" onclick="refreshAll()">
+        <span class="refresh-icon">🔄</span> Actualiser toutes les sources
+      </button>
+      <div class="unit-toggle">
+        <button class="unit-btn active" id="btn-celsius" onclick="setUnit('C')">°C</button>
+        <button class="unit-btn" id="btn-fahrenheit" onclick="setUnit('F')">°F</button>
+      </div>
+    </div>
+
+    <!-- Weather cards grid -->
+    <section class="weather-grid" id="weather-grid">
+      <!-- Cards injected by JS -->
+    </section>
+
+    <!-- Forecast section -->
+    <section class="forecast-section" id="forecast-section">
+      <h2 class="section-title">📅 Prévisions 7 jours — Open-Meteo (référence gratuite)</h2>
+      <div class="forecast-grid" id="forecast-grid">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- Comparison table -->
+    <section class="table-section">
+      <h2 class="section-title">📊 Tableau comparatif des données actuelles</h2>
+      <div class="table-wrapper">
+        <table class="comparison-table" id="comparison-table">
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Temp. (°C)</th>
+              <th>Ressenti (°C)</th>
+              <th>Humidité (%)</th>
+              <th>Vent (km/h)</th>
+              <th>Pression (hPa)</th>
+              <th>UV Index</th>
+              <th>Conditions</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="comparison-tbody">
+            <!-- Injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================
+       FOOTER
+  ============================= -->
+  <footer class="site-footer">
+    <p>
+      Météo Anglet Comparaison — Données fournies par les APIs météo respectives.
+      Ce site ne stocke aucune donnée personnelle. Les clés API restent dans votre navigateur.
+    </p>
+    <p>
+      <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> ·
+      <a href="https://openweathermap.org" target="_blank" rel="noopener">OpenWeatherMap</a> ·
+      <a href="https://www.weatherapi.com" target="_blank" rel="noopener">WeatherAPI</a> ·
+      <a href="https://www.visualcrossing.com" target="_blank" rel="noopener">Visual Crossing</a> ·
+      <a href="https://meteo.concept.fr" target="_blank" rel="noopener">Météo Concept</a> ·
+      <a href="https://tomorrow.io" target="_blank" rel="noopener">Tomorrow.io</a> ·
+      <a href="https://www.weatherstack.com" target="_blank" rel="noopener">Weatherstack</a> ·
+      <a href="https://www.accuweather.com" target="_blank" rel="noopener">AccuWeather</a> ·
+      <a href="https://api.windy.com" target="_blank" rel="noopener">Windy/Pirate Weather</a> ·
+      <a href="https://www.meteosource.com" target="_blank" rel="noopener">Meteosource</a>
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/weather-apis.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
